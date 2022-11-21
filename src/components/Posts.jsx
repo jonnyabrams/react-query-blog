@@ -11,7 +11,7 @@ const fetchPosts = async () => {
   return response.json();
 };
 
-const Posts = async () => {
+const Posts = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedPost, setSelectedPost] = useState(null);
 
