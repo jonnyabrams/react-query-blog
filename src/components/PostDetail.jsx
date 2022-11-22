@@ -24,7 +24,7 @@ const updatePost = async (postId) => {
 };
 
 const PostDetail = ({ post }) => {
-  const { data, isLoading, isError, error } = useQuery(["comments"], () =>
+  const { data, isLoading, isError, error } = useQuery(["comments", post.id], () =>
     fetchComments(post.id)
   );
   if (isLoading) return <h3>Loading...</h3>;
