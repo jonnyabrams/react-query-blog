@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+
 const fetchComments = async (postId) => {
   const response = await fetch(
     `https://jsonplaceholder.typicode.com/comments?postId=${postId}`
@@ -22,8 +24,17 @@ const updatePost = async (postId) => {
 };
 
 const PostDetail = ({ post }) => {
-  // replace with useQuery
-  const data = [];
+  const { data, isLoading, isError, error } = useQuery(["comments"], () =>
+    fetchComments(post.id)
+  );
+  if (isLoading) return <h3>Loading...</h3>;
+  if (isError)
+    return (
+      <>
+        <h3>Oops, something went wrong...</h3>
+        <p>{error.toString()}</p>
+      </>
+    );
 
   return (
     <>
@@ -38,6 +49,6 @@ const PostDetail = ({ post }) => {
       ))}
     </>
   );
-}
+};
 
-export default PostDetail
+export default PostDetail;

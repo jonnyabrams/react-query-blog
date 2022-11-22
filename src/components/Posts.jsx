@@ -16,7 +16,7 @@ const Posts = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedPost, setSelectedPost] = useState(null);
 
-  const { data, isLoading, isError, error } = useQuery(["posts"], fetchPosts);
+  const { data, isLoading, isError, error } = useQuery(["posts"], fetchPosts, {staleTime: 2000});
   if (isLoading) return <h3>Loading...</h3>;
   if (isError)
     return (
