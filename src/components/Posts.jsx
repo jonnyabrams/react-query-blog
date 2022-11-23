@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import PostDetail from "./PostDetail";
 
@@ -16,10 +16,23 @@ const Posts = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPost, setSelectedPost] = useState(null);
 
+  const queryClient = useQueryClient();
+
+  // prefetches next page so transition is instant ie. no "Loading..."
+  useEffect(() => {
+    // don't fetch beyond what we know is there ie. only do the following logic if currentPage is less than maxPostPage
+    if (currentPage < maxPostPage) {
+      const nextPage = currentPage + 1;
+      queryClient.prefetchQuery(["posts", nextPage], () =>
+        fetchPosts(nextPage)
+      );
+    }
+  }, [currentPage, queryClient]);
+
   const { data, isLoading, isError, error } = useQuery(
     ["posts", currentPage],
     () => fetchPosts(currentPage),
-    { staleTime: 2000 }
+    { staleTime: 2000, keepPreviousData: true }
   );
   if (isLoading) return <h3>Loading...</h3>;
   if (isError)
@@ -51,7 +64,10 @@ const Posts = () => {
           Previous page
         </button>
         <span>Page {currentPage}</span>
-        <button disabled={ currentPage >= maxPostPage } onClick={() => setCurrentPage((prev) => prev + 1)}>
+        <button
+          disabled={currentPage >= maxPostPage}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+        >
           Next page
         </button>
       </div>
